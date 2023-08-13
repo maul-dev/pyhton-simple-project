@@ -2,6 +2,8 @@ from turtle import Screen
 from data import WIDTH, HEIGHT
 from snake import Snake
 import time
+from food import Food
+from scoreboard import ScoreBoard
 
 
 def create_screen():
@@ -22,11 +24,17 @@ def binding_key(screen, snakes):
 
 screen_window = create_screen()
 snake = Snake()
+food = Food()
+score = ScoreBoard()
 binding_key(screen_window, snake)
 game_on = True
 while game_on:
     screen_window.update()
     time.sleep(0.1)
     snake.move()
+    if snake.head.distance(food) < 15:
+        food.refresh()
+        score.update_score()
+
 
 screen_window.exitonclick()
