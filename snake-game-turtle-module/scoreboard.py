@@ -14,8 +14,15 @@ class ScoreBoard(Turtle):
 
     def update_score(self):
         self.clear()
-        self.score +=1
+        self.score += 1
         self.display_score()
+
+    def game_over(self):
+        self.clear()
+        self.goto(0, 0)
+        self.write(arg="GAME OVER", align=ALIGN, font=FONT)
+        self.goto(0, -30)
+        self.write(arg=f"Total Score: {self.score}", align=ALIGN, font=FONT)
 
     def display_score(self):
         self.write(arg=f"Score: {self.score}", align=ALIGN, font=FONT)

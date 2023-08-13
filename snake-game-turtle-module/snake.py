@@ -13,6 +13,10 @@ class Snake:
             snake.append(self.add_segment(position))
         return snake
 
+    def extend(self):
+        segment = self.add_segment(self.segments[-1].position())
+        self.segments.append(segment)
+
     @staticmethod
     def add_segment(position):
         new_segment = Turtle("square")
