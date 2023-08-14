@@ -1,27 +1,40 @@
 from turtle import Turtle
+from random import randint
 
 
-class Paddle:
+class Paddle(Turtle):
     def __init__(self, position):
-        self.paddle = self.create_paddle(position)
-
-    @staticmethod
-    def create_paddle(position):
-        paddle = []
-        for pos in position:
-            new_square = Turtle("square")
-            new_square.color("white")
-            new_square.penup()
-            new_square.goto(pos)
-            paddle.append(new_square)
-        return paddle
+        super().__init__()
+        self.shape("square")
+        self.shapesize(stretch_len=5)
+        self.color("white")
+        self.penup()
+        self.setheading(90)
+        self.setposition(position)
 
     def up(self):
-        for pad in self.paddle:
-            pad.setheading(90)
-            pad.forward(50)
+        self.setheading(90)
+        self.forward(20)
 
     def down(self):
-        for pad in self.paddle:
-            pad.setheading(270)
-            pad.forward(50)
+        self.setheading(270)
+        self.forward(20)
+
+
+class Ball(Turtle):
+    def __init__(self):
+        super().__init__()
+        self.shape("circle")
+        self.color("white")
+        self.penup()
+        self.shapesize(stretch_wid=0.8, stretch_len=0.8)
+        self.setheading(randint(0, 360))
+
+    def move(self):
+        self.forward(20)
+
+    def collision_paddle(self):
+        self.setheading(180 - self.heading())
+
+    def collision_wall(self):
+        self.setheading(360 - self.heading())
