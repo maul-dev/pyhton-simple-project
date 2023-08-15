@@ -1,5 +1,5 @@
 from turtle import Screen
-from paddle import Paddle, Ball
+from paddle import Paddle, Ball, Scoreboard
 import time
 
 
@@ -13,34 +13,41 @@ def create_screen():
 
 def binding_key(screen, f_paddle, s_paddle):
     screen.listen()
-    screen.onkeypress(fun=f_paddle.up, key="Up")
-    screen.onkeypress(fun=f_paddle.down, key="Down")
-    screen.onkeypress(fun=s_paddle.up, key="w")
-    screen.onkeypress(fun=s_paddle.down, key="s")
+    screen.onkeypress(fun=f_paddle.up, key="w")
+    screen.onkeypress(fun=f_paddle.down, key="s")
+    screen.onkeypress(fun=s_paddle.up, key="Up")
+    screen.onkeypress(fun=s_paddle.down, key="Down")
 
 
-first_paddle_position = [(-600, 0), (-600, 20), (-600, 40), (-600, -20), (-600, -40)]
-second_paddle_position = [(600, 0), (600, 20), (600, 40), (600, -20), (600, -40)]
+l_paddle_position = (-600, 0)
+r_paddle_position = (600, 0)
 
 screen_window = create_screen()
-first_paddle = Paddle(first_paddle_position, (-60, 300))
-second_paddle = Paddle(second_paddle_position, (60, 300))
+l_paddle = Paddle(l_paddle_position)
+r_paddle = Paddle(r_paddle_position)
 ball = Ball()
-binding_key(screen_window, first_paddle, second_paddle)
+score = Scoreboard()
+binding_key(screen_window, l_paddle, r_paddle)
 
 game_is_on = True
 while game_is_on:
-    screen_window.update()
     time.sleep(0.1)
+    screen_window.update()
     ball.move()
-    if first_paddle.collision(ball) or second_paddle.collision(ball):
-        ball.collision_paddle()
+    if (ball.distance(l_paddle) < 50 and abs(ball.xcor() - l_paddle.xcor()) < 30) or \
+            (ball.distance(r_paddle) < 50 and abs(ball.xcor() - r_paddle.xcor()) < 30):
+        ball.bounces_paddle()
+        ball.increase_speed()
 
     if ball.ycor() > 345 or ball.ycor() < -345:
-        ball.collision_wall()
+        ball.bounces_wall()
 
-    if ball.xcor() > 1280/2 or ball.xcor() < -1280/2:
-        first_paddle.score +=1
-        ball.refresh()
+    if ball.xcor() > 650:
+        ball.reset_position()
+        score.l_point()
+
+    if ball.xcor() < -650:
+        ball.reset_position()
+        score.r_point()
 
 screen_window.exitonclick()

@@ -2,45 +2,22 @@ from turtle import Turtle
 import random
 
 
-class Paddle:
-    # def __init__(self, position):
-    #     super().__init__()
-    #     self.shape("square")
-    #     self.shapesize(stretch_len=5)
-    #     self.color("white")
-    #     self.penup()
-    #     self.setheading(90)
-    def __init__(self, position, scoreboard_position):
-        self.paddle = self.create_paddle(position)
-        self.score = 0
-        self.scoreboard = Scoreboard(self.score, scoreboard_position)
-
-    @staticmethod
-    def create_paddle(position):
-        pad = []
-        for pos in position:
-            new_paddle = Turtle("square")
-            new_paddle.penup()
-            new_paddle.color("white")
-            new_paddle.goto(pos)
-            pad.append(new_paddle)
-        return pad
+class Paddle(Turtle):
+    def __init__(self, position):
+        super().__init__()
+        self.shape("square")
+        self.shapesize(stretch_wid=5, stretch_len=1)
+        self.color("white")
+        self.penup()
+        self.goto(position)
 
     def up(self):
-        for pad in self.paddle:
-            pad.setheading(90)
-            pad.forward(20)
+        new_y = self.ycor() + 20
+        self.goto(self.xcor(), new_y)
 
     def down(self):
-        for pad in self.paddle:
-            pad.setheading(270)
-            pad.forward(20)
-
-    def collision(self, ball) -> bool:
-        for pad in self.paddle:
-            if pad.distance(ball) < 30:
-                return True
-        return False
+        new_y = self.ycor() - 20
+        self.goto(self.xcor(), new_y)
 
 
 class Ball(Turtle):
@@ -49,14 +26,10 @@ class Ball(Turtle):
         self.shape("circle")
         self.color("white")
         self.penup()
-        self.shapesize(stretch_wid=0.8, stretch_len=0.8)
-        self.random_launch()
+        self.random_direction()
+        self.move_distance = 20
 
-    def refresh(self):
-        self.setposition(0, 0)
-        self.random_launch()
-
-    def random_launch(self):
+    def random_direction(self):
         direction = ["left", "right"]
         rand_dir = random.choice(direction)
         if rand_dir == "left":
@@ -65,23 +38,44 @@ class Ball(Turtle):
             self.setheading(random.randint(300, 420))
 
     def move(self):
-        self.forward(20)
+        self.forward(self.move_distance)
 
-    def collision_paddle(self):
+    def bounces_wall(self):
+        self.setheading(360 - self.heading())
+
+    def bounces_paddle(self):
         self.setheading(180 - self.heading())
 
-    def collision_wall(self):
-        self.setheading(360 - self.heading())
+    def reset_position(self):
+        self.goto(0, 0)
+        self.move_distance = 20
+        self.random_direction()
+
+    def increase_speed(self):
+        self.move_distance += 5
 
 
 class Scoreboard(Turtle):
-    def __init__(self, score, position):
+    def __init__(self):
         super().__init__()
         self.hideturtle()
         self.penup()
         self.color("white")
-        self.goto(position)
-        self.display_score(score)
+        self.l_score = 0
+        self.r_score = 0
+        self.update_score()
 
-    def display_score(self, score):
-        self.write(arg=f"{score}", align="center", font=('Arial', 18, 'normal'))
+    def update_score(self):
+        self.clear()
+        self.goto(-80, 250)
+        self.write(arg=f"{self.l_score}", align="center", font=('Courier', 80, 'normal'))
+        self.goto(80, 250)
+        self.write(arg=f"{self.r_score}", align="center", font=('Courier', 80, 'normal'))
+
+    def l_point(self):
+        self.l_score += 1
+        self.update_score()
+
+    def r_point(self):
+        self.r_score += 1
+        self.update_score()
