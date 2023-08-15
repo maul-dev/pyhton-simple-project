@@ -27,6 +27,10 @@ while game_is_on:
         cars.add_cars()
 
     for car in cars.cars_list:
+        if car.xcor() < -290:
+            car.clear()
+            car.hideturtle()
+            cars.cars_list.remove(car)
         if car.distance(player) < 20:
             game_is_on = False
             scoreboard.game_over()
