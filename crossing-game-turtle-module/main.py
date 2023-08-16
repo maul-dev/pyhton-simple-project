@@ -9,22 +9,18 @@ screen.setup(width=600, height=600)
 screen.tracer(0)
 player = Player()
 cars = CarManager()
-scoreboard = Scoreboard((-230, 260))
+scoreboard = Scoreboard((-290, 260))
 
 screen.listen()
 screen.onkeypress(fun=player.up, key="w")
 screen.onkeypress(fun=player.up, key="Up")
-
 time_speed = 0.1
-counter = 0
 game_is_on = True
 while game_is_on:
     time.sleep(time_speed)
     screen.update()
+    cars.create_car()
     cars.move()
-    counter += 1
-    if counter % 6 == 0:
-        cars.add_cars()
 
     for car in cars.cars_list:
         if car.xcor() < -290:
@@ -36,8 +32,8 @@ while game_is_on:
             scoreboard.game_over()
 
     if player.is_finish():
-        player.reset_position()
-        cars.increase_speed()
+        player.start_position()
+        cars.level_up()
         scoreboard.increase_level()
 
 
